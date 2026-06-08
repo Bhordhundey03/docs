@@ -1,0 +1,113 @@
+---
+title: "Get account details"
+description: "Retrieve the bank account details and current balance for your business."
+---
+
+## Endpoint
+
+```
+GET /clients/business/account-details
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  The ID of the business whose account details you want to retrieve.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable outcome.
+</ResponseField>
+
+<ResponseField name="data.accountNumber" type="string">
+  The NUBAN account number assigned to this business.
+</ResponseField>
+
+<ResponseField name="data.accountType" type="string">
+  The type of account, e.g. `"savings"` or `"current"`.
+</ResponseField>
+
+<ResponseField name="data.customerId" type="string">
+  The customer ID in the banking system.
+</ResponseField>
+
+<ResponseField name="data.businessId" type="string">
+  The business ID associated with this account.
+</ResponseField>
+
+<ResponseField name="data.accountBalance" type="string">
+  The current account balance, denominated in kobo (smallest currency unit).
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X GET https://sandbox.stellasbank.com/api/v1/clients/business/account-details \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID"
+```
+
+```js Node.js
+const res = await fetch(
+  "https://sandbox.stellasbank.com/api/v1/clients/business/account-details",
+  {
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+    },
+  }
+);
+const { data } = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.get(
+    "https://sandbox.stellasbank.com/api/v1/clients/business/account-details",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+)
+print(res.json()["data"])
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Account details retrieved successfully",
+  "data": {
+    "accountNumber": "0123456789",
+    "accountType": "current",
+    "customerId": "cust_abc123",
+    "businessId": "biz_xyz789",
+    "accountBalance": "5000000"
+  }
+}
+```
+
+<Info>
+  `accountBalance` is expressed in **kobo**. Divide by 100 to convert to naira. For example, `"5000000"` is ₦50,000.
+</Info>

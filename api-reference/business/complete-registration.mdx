@@ -1,0 +1,146 @@
+---
+title: "Complete business registration"
+description: "Submit the remaining documents and information to complete a business's KYC registration."
+---
+
+<Info>
+  This endpoint accepts `multipart/form-data` rather than JSON because it includes file uploads. Set your `Content-Type` accordingly or let your HTTP client handle it automatically.
+</Info>
+
+## Endpoint
+
+```
+PATCH /clients/business/complete-registration
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+## Request body (multipart/form-data)
+
+<ParamField body="businessId" type="string" required>
+  The ID of the business to complete registration for.
+</ParamField>
+
+<ParamField body="bvn" type="string" required>
+  The business owner's 11-digit Bank Verification Number.
+</ParamField>
+
+<ParamField body="residentialAddress" type="string" required>
+  The business owner's residential address.
+</ParamField>
+
+<ParamField body="stateId" type="string" required>
+  The ID of the state where the business is located.
+</ParamField>
+
+<ParamField body="otp" type="string" required>
+  One-time password sent during the BVN validation step.
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  Account password for confirmation.
+</ParamField>
+
+<ParamField body="photoId" type="file" required>
+  A photo of a valid government-issued ID (JPEG or PNG).
+</ParamField>
+
+<ParamField body="businessDocuments" type="file">
+  One or more supporting business documents (e.g. CAC certificate). Multiple files are accepted.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Confirmation message.
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X PATCH https://sandbox.stellasbank.com/api/v1/clients/business/complete-registration \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -F "businessId=YOUR_BUSINESS_ID" \
+  -F "bvn=12345678901" \
+  -F "residentialAddress=12 Marina Street, Lagos" \
+  -F "stateId=state_01" \
+  -F "otp=123456" \
+  -F "password=YOUR_PASSWORD" \
+  -F "photoId=@/path/to/photo-id.jpg" \
+  -F "businessDocuments=@/path/to/doc.pdf"
+```
+
+```js Node.js
+const form = new FormData();
+form.append("businessId", "YOUR_BUSINESS_ID");
+form.append("bvn", "12345678901");
+form.append("residentialAddress", "12 Marina Street, Lagos");
+form.append("stateId", "state_01");
+form.append("otp", "123456");
+form.append("password", "YOUR_PASSWORD");
+form.append("photoId", photoIdFile); // File or Blob
+form.append("businessDocuments", docFile);
+
+const res = await fetch(
+  "https://sandbox.stellasbank.com/api/v1/clients/business/complete-registration",
+  {
+    method: "PATCH",
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+    },
+    body: form,
+  }
+);
+const json = await res.json();
+```
+
+```python Python
+import requests
+
+with open("/path/to/photo-id.jpg", "rb") as photo, open("/path/to/doc.pdf", "rb") as doc:
+    res = requests.patch(
+        "https://sandbox.stellasbank.com/api/v1/clients/business/complete-registration",
+        headers={
+            "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+            "SECRET_KEY": "YOUR_SECRET_KEY",
+        },
+        data={
+            "businessId": "YOUR_BUSINESS_ID",
+            "bvn": "12345678901",
+            "residentialAddress": "12 Marina Street, Lagos",
+            "stateId": "state_01",
+            "otp": "123456",
+            "password": "YOUR_PASSWORD",
+        },
+        files={
+            "photoId": photo,
+            "businessDocuments": doc,
+        },
+    )
+print(res.json())
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Business registration completed successfully"
+}
+```

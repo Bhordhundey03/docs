@@ -1,0 +1,121 @@
+---
+title: "Create payout account"
+description: "Register a bank account as a payout destination for your business."
+---
+
+## Endpoint
+
+```
+POST /clients/business/payouts
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  Your business ID.
+</ParamField>
+
+## Request body
+
+<ParamField body="accountName" type="string" required>
+  The name on the bank account.
+</ParamField>
+
+<ParamField body="accountNumber" type="string" required>
+  The bank account number.
+</ParamField>
+
+<ParamField body="bankName" type="string" required>
+  The name of the bank, e.g. `"Guaranty Trust Bank"`.
+</ParamField>
+
+<ParamField body="bankCode" type="string" required>
+  The bank's sort code, e.g. `"058"`.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Confirmation message.
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST https://stella-thirdparty-api.herokuapp.com/api/v1/clients/business/payouts \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "accountName": "Ada Lovelace",
+    "accountNumber": "0123456789",
+    "bankName": "Guaranty Trust Bank",
+    "bankCode": "058"
+  }'
+```
+
+```js Node.js
+const res = await fetch(
+  "https://stella-thirdparty-api.herokuapp.com/api/v1/clients/business/payouts",
+  {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      accountName: "Ada Lovelace",
+      accountNumber: "0123456789",
+      bankName: "Guaranty Trust Bank",
+      bankCode: "058",
+    }),
+  }
+);
+const json = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.post(
+    "https://stella-thirdparty-api.herokuapp.com/api/v1/clients/business/payouts",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+    json={
+        "accountName": "Ada Lovelace",
+        "accountNumber": "0123456789",
+        "bankName": "Guaranty Trust Bank",
+        "bankCode": "058",
+    },
+)
+print(res.json())
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Payout account created successfully"
+}
+```

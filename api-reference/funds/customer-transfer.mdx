@@ -1,0 +1,149 @@
+---
+title: "Customer funds transfer"
+description: "Transfer funds from a customer account to another bank account."
+---
+
+## Endpoint
+
+```
+POST /clients/business/customers/funds/transfer
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  Your business ID.
+</ParamField>
+
+## Request body
+
+<ParamField body="amount" type="integer" required>
+  Amount to transfer, in **kobo**.
+</ParamField>
+
+<ParamField body="receiverAccountNumber" type="string" required>
+  The destination bank account number to credit.
+</ParamField>
+
+<ParamField body="receiverBankCode" type="string" required>
+  The bank code of the receiving bank.
+</ParamField>
+
+<ParamField body="retrievalReference" type="string" required>
+  A unique reference you generate for this transaction. Used for idempotency and reconciliation.
+</ParamField>
+
+<ParamField body="narration" type="string" required>
+  A description of the transfer.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Confirmation message.
+</ResponseField>
+
+<ResponseField name="data.amount" type="string">
+  Amount transferred, in kobo.
+</ResponseField>
+
+<ResponseField name="data.transactionCharge" type="string">
+  Fee charged for the transfer, in kobo.
+</ResponseField>
+
+<ResponseField name="data.totalAmount" type="string">
+  Total amount debited (amount + charge), in kobo.
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST https://sandbox.stellasbank.com/api/v1/clients/business/customers/funds/transfer \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 200000,
+    "receiverAccountNumber": "0123456789",
+    "receiverBankCode": "058",
+    "retrievalReference": "txn_ref_002",
+    "narration": "Salary payment"
+  }'
+```
+
+```js Node.js
+const res = await fetch(
+  "https://sandbox.stellasbank.com/api/v1/clients/business/customers/funds/transfer",
+  {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      amount: 200000,
+      receiverAccountNumber: "0123456789",
+      receiverBankCode: "058",
+      retrievalReference: "txn_ref_002",
+      narration: "Salary payment",
+    }),
+  }
+);
+const { data } = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.post(
+    "https://sandbox.stellasbank.com/api/v1/clients/business/customers/funds/transfer",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+    json={
+        "amount": 200000,
+        "receiverAccountNumber": "0123456789",
+        "receiverBankCode": "058",
+        "retrievalReference": "txn_ref_002",
+        "narration": "Salary payment",
+    },
+)
+print(res.json())
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Transfer successful",
+  "data": {
+    "amount": "200000",
+    "transactionCharge": "10000",
+    "totalAmount": "210000"
+  }
+}
+```
+
+<Info>
+  All amounts are in **kobo**. Divide by 100 to convert to naira.
+</Info>

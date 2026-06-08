@@ -1,0 +1,116 @@
+---
+title: "Complete member registration"
+description: "Complete the registration flow for a member who received an invitation."
+---
+
+<Info>
+  This endpoint is called by the **invited member** — not by the business owner. The invitee receives an email with an `authorizationToken` that they use here to set their profile and password.
+</Info>
+
+## Endpoint
+
+```
+PATCH /clients/members/complete-registration
+```
+
+## Headers
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+## Request body
+
+<ParamField body="authorizationToken" type="string" required>
+  The token sent to the invitee's email address when the invitation was created.
+</ParamField>
+
+<ParamField body="firstName" type="string" required>
+  The invitee's first name.
+</ParamField>
+
+<ParamField body="lastName" type="string" required>
+  The invitee's last name.
+</ParamField>
+
+<ParamField body="phoneNo" type="string" required>
+  The invitee's phone number.
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  The password the invitee wants to set for their account.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Confirmation message, e.g. `"Registration completed successfully"`.
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X PATCH https://sandbox.stellasbank.com/api/v1/clients/members/complete-registration \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "authorizationToken": "TOKEN_FROM_EMAIL",
+    "firstName": "Ada",
+    "lastName": "Lovelace",
+    "phoneNo": "+2348012345678",
+    "password": "SecurePassword123!"
+  }'
+```
+
+```js Node.js
+const res = await fetch(
+  "https://sandbox.stellasbank.com/api/v1/clients/members/complete-registration",
+  {
+    method: "PATCH",
+    headers: {
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      authorizationToken: "TOKEN_FROM_EMAIL",
+      firstName: "Ada",
+      lastName: "Lovelace",
+      phoneNo: "+2348012345678",
+      password: "SecurePassword123!",
+    }),
+  }
+);
+const json = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.patch(
+    "https://sandbox.stellasbank.com/api/v1/clients/members/complete-registration",
+    headers={"SECRET_KEY": "YOUR_SECRET_KEY"},
+    json={
+        "authorizationToken": "TOKEN_FROM_EMAIL",
+        "firstName": "Ada",
+        "lastName": "Lovelace",
+        "phoneNo": "+2348012345678",
+        "password": "SecurePassword123!",
+    },
+)
+print(res.json())
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Registration completed successfully"
+}
+```

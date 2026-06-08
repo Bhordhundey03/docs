@@ -1,0 +1,130 @@
+---
+title: "Get audit log"
+description: "Retrieve the details of a single audit log entry."
+---
+
+## Endpoint
+
+```
+GET /clients/business/audits/{auditId}
+```
+
+## Path parameters
+
+<ParamField path="auditId" type="string" required>
+  The unique ID of the audit log entry to retrieve.
+</ParamField>
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  Your business ID.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable outcome.
+</ResponseField>
+
+<ResponseField name="data.id" type="string">
+  Unique audit log ID.
+</ResponseField>
+
+<ResponseField name="data.email" type="string">
+  Email of the user who performed the action.
+</ResponseField>
+
+<ResponseField name="data.user" type="string">
+  Full name of the user.
+</ResponseField>
+
+<ResponseField name="data.action" type="string">
+  Description of the action taken.
+</ResponseField>
+
+<ResponseField name="data.type" type="string">
+  Category of the event.
+</ResponseField>
+
+<ResponseField name="data.date" type="string">
+  ISO 8601 timestamp of when the action occurred.
+</ResponseField>
+
+<ResponseField name="data.role" type="string">
+  Role of the user at the time of the action.
+</ResponseField>
+
+<ResponseField name="data.ipAddress" type="string">
+  IP address from which the action was performed.
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X GET https://sandbox.stellasbank.com/api/v1/clients/business/audits/AUDIT_ID \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID"
+```
+
+```js Node.js
+const res = await fetch(
+  "https://sandbox.stellasbank.com/api/v1/clients/business/audits/AUDIT_ID",
+  {
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+    },
+  }
+);
+const { data } = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.get(
+    "https://sandbox.stellasbank.com/api/v1/clients/business/audits/AUDIT_ID",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+)
+print(res.json()["data"])
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Audit log retrieved successfully",
+  "data": {
+    "id": "audit_001",
+    "email": "ada@example.com",
+    "user": "Ada Lovelace",
+    "action": "Initiated a transfer of ₦1,100",
+    "type": "transaction",
+    "date": "2024-06-09T14:22:00.000Z",
+    "role": "Admin",
+    "ipAddress": "102.89.23.44"
+  }
+}
+```

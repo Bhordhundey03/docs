@@ -1,0 +1,104 @@
+---
+title: "Errors"
+description: "How the Interstellas API communicates errors and how to handle them in your integration."
+---
+
+The Interstellas API uses the `status` field in the response envelope to signal success or failure. On error, `status` is `false` and `message` describes the problem.
+
+## Error response format
+
+All error responses follow the same envelope as successful ones:
+
+```json
+{
+  "status": false,
+  "message": "Invalid credentials.",
+  "data": null
+}
+```
+
+<ResponseField name="status" type="boolean">
+  Always `false` for error responses. Check this field first in your error-handling logic.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  A human-readable description of what went wrong. Use this for logging and debugging — do not drive conditional logic in your application from this string.
+</ResponseField>
+
+<ResponseField name="data" type="null">
+  `null` on all error responses.
+</ResponseField>
+
+## HTTP status codes
+
+| Status | Meaning | Common cause |
+|--------|---------|--------------|
+| `200 OK` | Request succeeded | — |
+| `201 Created` | Resource created | — |
+| `400 Bad Request` | Invalid or missing parameters | Required field absent or wrong type |
+| `401 Unauthorized` | Authentication failed | Missing, expired, or invalid `Authorization` token or `SECRET_KEY` |
+| `403 Forbidden` | Insufficient permissions | Token valid but lacks access to this resource |
+| `404 Not Found` | Resource does not exist | Invalid ID in the URL path |
+| `422 Unprocessable Entity` | Validation error | Field value failed server-side validation |
+| `500 Internal Server Error` | Unexpected server error | Retry with exponential backoff |
+
+## Handling errors in code
+
+<CodeGroup>
+```js Node.js
+const res = await fetch("https://sandbox.stellasbank.com/api/v1/...", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: "Bearer YOUR_ACCESS_TOKEN",
+    SECRET_KEY: "YOUR_SECRET_KEY",
+    businessId: "YOUR_BUSINESS_ID",
+  },
+  body: JSON.stringify({ /* request body */ }),
+});
+
+const json = await res.json();
+
+if (!json.status) {
+  console.error("API error:", json.message);
+  return;
+}
+
+// Safe to use json.data here
+```
+
+```python Python
+import requests
+
+res = requests.post(
+    "https://sandbox.stellasbank.com/api/v1/...",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+    json={ # request body },
+)
+
+body = res.json()
+if not body["status"]:
+    print("API error:", body["message"])
+else:
+    print(body["data"])
+```
+</CodeGroup>
+
+<Info>
+  Always check `json.status` (the field in the response body) in addition to the HTTP status code. Some error conditions may return `200` with `status: false`.
+</Info>
+
+## Authentication errors
+
+If you receive `401 Unauthorized`, verify that:
+
+1. The `Authorization` header is present and formatted as `Bearer YOUR_ACCESS_TOKEN`.
+2. The `SECRET_KEY` header is present and matches your account's secret key.
+3. The `businessId` header is present and valid.
+4. Your access token has not expired — re-authenticate via [`POST /auth/signin`](/api-reference/auth/signin) if needed.
+
+See [Authentication](/essentials/authentication) for a full credential reference.

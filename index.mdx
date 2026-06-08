@@ -1,0 +1,141 @@
+---
+title: "Introduction"
+description: "Learn how to integrate the Interstellas API into your application."
+---
+
+## Overview
+
+The Interstellas API gives you programmatic access to the full suite of features available on the Interstellas dashboard. Built on REST principles, it lets you integrate financial operations, account management, and transaction processing directly into your own application.
+
+All endpoints are organised around the core resources you interact with on the dashboard. The API accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes to communicate the outcome of each request.
+
+<Info>
+  All API requests must be made over **HTTPS**. Requests made over plain HTTP will be rejected.
+</Info>
+
+**Base URL**
+
+```
+https://api.stellasbank.com/v1
+```
+
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="bolt" href="/quickstart">
+    Make your first API call in minutes.
+  </Card>
+  <Card title="Authentication" icon="key" href="/authentication">
+    Manage and rotate your API keys securely.
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/overview">
+    Explore all available endpoints and parameters.
+  </Card>
+  <Card title="Postman Collection" icon="rectangle-terminal" href="https://documenter.getpostman.com/view/3701162/UV5f7DdA">
+    Test the API interactively with a pre-configured workspace.
+  </Card>
+</CardGroup>
+
+---
+
+## Authentication
+
+The Interstellas API uses secret API keys to authenticate requests. Your credentials are issued by the Interstellas team. You will receive a **test key** for development and a **live key** for production — always use test keys while building and validating your integration.
+
+Pass your API Secret Key in the `Authorization` header of every request:
+
+```http
+Authorization: Bearer YOUR_SECRET_KEY
+```
+
+<Warning>
+  Your API keys carry significant privileges. Never expose them in client-side code, public repositories, or application logs. Requests made without a valid key will return `401 Unauthorized`.
+</Warning>
+
+---
+
+## Making Requests
+
+The API supports the standard HTTP methods — `GET`, `POST`, `PUT`, and `DELETE`. All request bodies must be JSON-encoded and include the `Content-Type: application/json` header.
+
+Each endpoint in this reference includes a sample HTTP request. Insert your credentials and specific parameters to run the call directly.
+
+<Tip>
+  Download the [Interstellas Postman Collection](https://documenter.getpostman.com/view/3701162/UV5f7DdA) to get a pre-configured workspace with all available endpoints ready to test.
+</Tip>
+
+---
+
+## Response Format
+
+All responses are JSON-encoded. The `Content-Type` response header will always be `application/json`. Every response follows a consistent envelope structure:
+
+```json
+{
+  "status": true,
+  "message": "Request was successful.",
+  "data": {}
+}
+```
+
+<ResponseField name="status" type="boolean" required>
+  `true` if the request was processed without errors; `false` otherwise. Use this field for programmatic checks in your integration logic.
+</ResponseField>
+
+<ResponseField name="message" type="string" required>
+  A human-readable description of the outcome. Provides additional context on success and an explanation when `status` is `false`.
+
+  <Warning>Log this value for debugging — do not use it for conditional logic in your application.</Warning>
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  The actionable payload returned by the endpoint. Structure varies per endpoint and is present only when the operation produces a result.
+</ResponseField>
+
+---
+
+## Pagination
+
+Endpoints that return collections of resources support page-based pagination. Use the `page` and `limit` query parameters to control which subset of records is returned. When pagination applies, the response includes a top-level `pagination` object alongside `data`:
+
+```json
+{
+  "status": true,
+  "data": [],
+  "pagination": {
+    "totalCount": 84,
+    "hasNextPage": true,
+    "hasPreviousPage": false,
+    "nextPage": 2,
+    "previousPage": 0,
+    "limit": 10,
+    "lastPage": 9
+  }
+}
+```
+
+<ResponseField name="pagination.totalCount" type="integer">
+  The total number of records matching the current query, across all pages.
+</ResponseField>
+
+<ResponseField name="pagination.hasNextPage" type="boolean">
+  `true` if additional records exist beyond the current page.
+</ResponseField>
+
+<ResponseField name="pagination.hasPreviousPage" type="boolean">
+  `true` if records exist on pages before the current one.
+</ResponseField>
+
+<ResponseField name="pagination.nextPage" type="integer">
+  The page number to pass as `?page=` to retrieve the next set of records. Only meaningful when `hasNextPage` is `true`.
+</ResponseField>
+
+<ResponseField name="pagination.previousPage" type="integer">
+  The page number to pass as `?page=` to retrieve the previous set of records. Only meaningful when `hasPreviousPage` is `true`.
+</ResponseField>
+
+<ResponseField name="pagination.limit" type="integer">
+  The maximum number of records returned per request. Defaults to `10`. Override with a `limit` query parameter — for example, `?limit=25`.
+</ResponseField>
+
+<ResponseField name="pagination.lastPage" type="integer">
+  The number of the final page of results, derived from `totalCount` and `limit`.
+</ResponseField>

@@ -1,0 +1,99 @@
+---
+title: "List member roles"
+description: "Retrieve the available roles that can be assigned when inviting a new member."
+---
+
+## Endpoint
+
+```
+GET /clients/members/roles
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  Your business ID.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable outcome.
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of role objects.
+</ResponseField>
+
+<ResponseField name="data[].id" type="string">
+  Unique role ID. Pass this as `memberRoleId` when inviting a member.
+</ResponseField>
+
+<ResponseField name="data[].name" type="string">
+  Human-readable role name, e.g. `"Admin"` or `"Viewer"`.
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X GET https://sandbox.stellasbank.com/api/v1/clients/members/roles \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID"
+```
+
+```js Node.js
+const res = await fetch(
+  "https://sandbox.stellasbank.com/api/v1/clients/members/roles",
+  {
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+    },
+  }
+);
+const { data } = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.get(
+    "https://sandbox.stellasbank.com/api/v1/clients/members/roles",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+)
+print(res.json()["data"])
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Roles retrieved successfully",
+  "data": [
+    { "id": "role_001", "name": "Admin" },
+    { "id": "role_002", "name": "Manager" },
+    { "id": "role_003", "name": "Viewer" }
+  ]
+}
+```

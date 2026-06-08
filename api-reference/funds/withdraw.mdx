@@ -1,0 +1,135 @@
+---
+title: "Withdraw"
+description: "Withdraw funds from a customer account."
+---
+
+## Endpoint
+
+```
+POST /clients/business/customers/funds/withdraw
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  Your business ID.
+</ParamField>
+
+## Request body
+
+<ParamField body="payerAccountNumber" type="string" required>
+  The customer account number to debit.
+</ParamField>
+
+<ParamField body="retrievalReference" type="string" required>
+  A unique reference you generate for this withdrawal. Used for idempotency and reconciliation.
+</ParamField>
+
+<ParamField body="narration" type="string" required>
+  A description of the withdrawal.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Confirmation message.
+</ResponseField>
+
+<ResponseField name="data.amount" type="string">
+  Amount withdrawn, in kobo.
+</ResponseField>
+
+<ResponseField name="data.transactionCharge" type="string">
+  Fee charged for the withdrawal, in kobo.
+</ResponseField>
+
+<ResponseField name="data.totalAmount" type="string">
+  Total amount debited from the account (amount + charge), in kobo.
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST https://sandbox.stellasbank.com/api/v1/clients/business/customers/funds/withdraw \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "payerAccountNumber": "9012345678",
+    "retrievalReference": "withdraw_ref_001",
+    "narration": "ATM withdrawal"
+  }'
+```
+
+```js Node.js
+const res = await fetch(
+  "https://sandbox.stellasbank.com/api/v1/clients/business/customers/funds/withdraw",
+  {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      payerAccountNumber: "9012345678",
+      retrievalReference: "withdraw_ref_001",
+      narration: "ATM withdrawal",
+    }),
+  }
+);
+const { data } = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.post(
+    "https://sandbox.stellasbank.com/api/v1/clients/business/customers/funds/withdraw",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+    json={
+        "payerAccountNumber": "9012345678",
+        "retrievalReference": "withdraw_ref_001",
+        "narration": "ATM withdrawal",
+    },
+)
+print(res.json())
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Withdrawal successful",
+  "data": {
+    "amount": "500000",
+    "transactionCharge": "10000",
+    "totalAmount": "510000"
+  }
+}
+```
+
+<Info>
+  All amounts are in **kobo**. Divide by 100 to convert to naira.
+</Info>

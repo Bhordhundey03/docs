@@ -1,0 +1,162 @@
+---
+title: "List subscriptions"
+description: "Retrieve all subscription plans for your business."
+---
+
+## Endpoint
+
+```
+GET /clients/business/subscriptions
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  Your business ID.
+</ParamField>
+
+## Query parameters
+
+<ParamField query="page" type="integer">
+  Page number. Defaults to `1`.
+</ParamField>
+
+<ParamField query="limit" type="integer">
+  Records per page. Defaults to `10`.
+</ParamField>
+
+<ParamField query="packageName" type="string">
+  Filter by package name.
+</ParamField>
+
+<ParamField query="interval" type="string">
+  Filter by billing interval.
+</ParamField>
+
+<ParamField query="amount" type="string">
+  Filter by subscription amount (in kobo).
+</ParamField>
+
+<ParamField query="keyword" type="string">
+  Search across subscription fields by keyword.
+</ParamField>
+
+See [Pagination](/essentials/pagination) for full usage.
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable outcome.
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of subscription objects.
+</ResponseField>
+
+<ResponseField name="data[].id" type="string">
+  Unique subscription ID.
+</ResponseField>
+
+<ResponseField name="data[].packageName" type="string">
+  Name of the subscription package.
+</ResponseField>
+
+<ResponseField name="data[].amount" type="string">
+  Billing amount in kobo.
+</ResponseField>
+
+<ResponseField name="data[].interval" type="string">
+  Billing interval.
+</ResponseField>
+
+<ResponseField name="data[].businessId" type="string">
+  The business this subscription belongs to.
+</ResponseField>
+
+<ResponseField name="data[].clientId" type="string">
+  The client account this subscription belongs to.
+</ResponseField>
+
+<ResponseField name="pagination" type="object">
+  Standard pagination envelope. See [Pagination](/essentials/pagination).
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://stella-thirdparty-api.herokuapp.com/api/v1/clients/business/subscriptions?page=1&limit=10" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID"
+```
+
+```js Node.js
+const res = await fetch(
+  "https://stella-thirdparty-api.herokuapp.com/api/v1/clients/business/subscriptions?page=1&limit=10",
+  {
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+    },
+  }
+);
+const { data, pagination } = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.get(
+    "https://stella-thirdparty-api.herokuapp.com/api/v1/clients/business/subscriptions",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+    params={"page": 1, "limit": 10},
+)
+print(res.json())
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Subscriptions retrieved successfully",
+  "data": [
+    {
+      "id": "sub_001",
+      "packageName": "Pro Plan",
+      "amount": "500000",
+      "interval": "monthly",
+      "businessId": "biz_xyz789",
+      "clientId": "client_001"
+    }
+  ],
+  "pagination": {
+    "totalCount": 3,
+    "hasNextPage": false,
+    "hasPreviousPage": false,
+    "nextPage": 0,
+    "previousPage": 0,
+    "limit": 10,
+    "lastPage": 1
+  }
+}
+```

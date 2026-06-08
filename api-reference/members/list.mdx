@@ -1,0 +1,161 @@
+---
+title: "List members"
+description: "Retrieve all team members belonging to your business."
+---
+
+## Endpoint
+
+```
+GET /clients/members
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  The ID of the business whose members you want to list.
+</ParamField>
+
+## Query parameters
+
+<ParamField query="page" type="integer">
+  Page number. Defaults to `1`.
+</ParamField>
+
+<ParamField query="limit" type="integer">
+  Records per page. Defaults to `10`.
+</ParamField>
+
+See [Pagination](/essentials/pagination) for full usage.
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable outcome.
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of member objects.
+</ResponseField>
+
+<ResponseField name="data[].id" type="string">
+  Unique member ID.
+</ResponseField>
+
+<ResponseField name="data[].firstName" type="string">
+  Member's first name.
+</ResponseField>
+
+<ResponseField name="data[].lastName" type="string">
+  Member's last name.
+</ResponseField>
+
+<ResponseField name="data[].email" type="string">
+  Member's email address.
+</ResponseField>
+
+<ResponseField name="data[].phoneNo" type="string">
+  Member's phone number.
+</ResponseField>
+
+<ResponseField name="data[].isActive" type="boolean">
+  `true` if the member's account is active.
+</ResponseField>
+
+<ResponseField name="data[].clientMemberRoleId" type="string">
+  ID of the role assigned to this member.
+</ResponseField>
+
+<ResponseField name="data[].clientMemberRole" type="object">
+  The role object containing `id` and `name`.
+</ResponseField>
+
+<ResponseField name="data[].clientId" type="string">
+  The client account ID this member belongs to.
+</ResponseField>
+
+<ResponseField name="pagination" type="object">
+  Standard pagination envelope. See [Pagination](/essentials/pagination).
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://sandbox.stellasbank.com/api/v1/clients/members?page=1&limit=10" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID"
+```
+
+```js Node.js
+const res = await fetch(
+  "https://sandbox.stellasbank.com/api/v1/clients/members?page=1&limit=10",
+  {
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+    },
+  }
+);
+const { data, pagination } = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.get(
+    "https://sandbox.stellasbank.com/api/v1/clients/members",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+    params={"page": 1, "limit": 10},
+)
+print(res.json())
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Members retrieved successfully",
+  "data": [
+    {
+      "id": "mem_abc123",
+      "firstName": "Ada",
+      "lastName": "Lovelace",
+      "email": "ada@example.com",
+      "phoneNo": "+2348012345678",
+      "isActive": true,
+      "clientMemberRoleId": "role_xyz",
+      "clientMemberRole": { "id": "role_xyz", "name": "Admin" },
+      "clientId": "client_001"
+    }
+  ],
+  "pagination": {
+    "totalCount": 12,
+    "hasNextPage": true,
+    "hasPreviousPage": false,
+    "nextPage": 2,
+    "previousPage": 0,
+    "limit": 10,
+    "lastPage": 2
+  }
+}
+```

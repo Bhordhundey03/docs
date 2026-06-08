@@ -1,0 +1,127 @@
+---
+title: "Update payout account"
+description: "Update the details of an existing payout bank account."
+---
+
+## Endpoint
+
+```
+PUT /clients/business/payouts/{payoutAccountId}
+```
+
+## Path parameters
+
+<ParamField path="payoutAccountId" type="string" required>
+  The unique ID of the payout account to update.
+</ParamField>
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  Your business ID.
+</ParamField>
+
+## Request body
+
+<ParamField body="accountName" type="string" required>
+  Updated name on the bank account.
+</ParamField>
+
+<ParamField body="accountNumber" type="string" required>
+  Updated bank account number.
+</ParamField>
+
+<ParamField body="bankName" type="string" required>
+  Updated name of the bank.
+</ParamField>
+
+<ParamField body="bankCode" type="string" required>
+  Updated bank sort code.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Confirmation message.
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X PUT https://stella-thirdparty-api.herokuapp.com/api/v1/clients/business/payouts/PAYOUT_ID \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "accountName": "Ada Lovelace",
+    "accountNumber": "9876543210",
+    "bankName": "Access Bank",
+    "bankCode": "044"
+  }'
+```
+
+```js Node.js
+const res = await fetch(
+  "https://stella-thirdparty-api.herokuapp.com/api/v1/clients/business/payouts/PAYOUT_ID",
+  {
+    method: "PUT",
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      accountName: "Ada Lovelace",
+      accountNumber: "9876543210",
+      bankName: "Access Bank",
+      bankCode: "044",
+    }),
+  }
+);
+const json = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.put(
+    "https://stella-thirdparty-api.herokuapp.com/api/v1/clients/business/payouts/PAYOUT_ID",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+    json={
+        "accountName": "Ada Lovelace",
+        "accountNumber": "9876543210",
+        "bankName": "Access Bank",
+        "bankCode": "044",
+    },
+)
+print(res.json())
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Payout account updated successfully"
+}
+```

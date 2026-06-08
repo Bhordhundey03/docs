@@ -1,0 +1,154 @@
+---
+title: "List disputes"
+description: "Retrieve all disputes for your business, with optional filters."
+---
+
+## Endpoint
+
+```
+GET /clients/business/disputes
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  Your business ID.
+</ParamField>
+
+## Query parameters
+
+<ParamField query="page" type="integer">
+  Page number. Defaults to `1`.
+</ParamField>
+
+<ParamField query="limit" type="integer">
+  Records per page. Defaults to `10`.
+</ParamField>
+
+<ParamField query="transactionId" type="string">
+  Filter results to disputes for a specific transaction ID.
+</ParamField>
+
+<ParamField query="status" type="string">
+  Filter by dispute status, e.g. `"open"`, `"resolved"`, `"rejected"`.
+</ParamField>
+
+<ParamField query="keyword" type="string">
+  Search disputes by keyword against the description or transaction ID.
+</ParamField>
+
+See [Pagination](/essentials/pagination) for full usage.
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable outcome.
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of dispute objects.
+</ResponseField>
+
+<ResponseField name="data[].id" type="string">
+  Unique dispute ID.
+</ResponseField>
+
+<ResponseField name="data[].transactionId" type="string">
+  The ID of the disputed transaction.
+</ResponseField>
+
+<ResponseField name="data[].description" type="string">
+  Description of the issue submitted when the dispute was created.
+</ResponseField>
+
+<ResponseField name="data[].status" type="string">
+  Current status of the dispute.
+</ResponseField>
+
+<ResponseField name="data[].dateCreated" type="string">
+  ISO 8601 timestamp of when the dispute was filed.
+</ResponseField>
+
+<ResponseField name="pagination" type="object">
+  Standard pagination envelope. See [Pagination](/essentials/pagination).
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://sandbox.stellasbank.com/api/v1/clients/business/disputes?page=1&limit=10&status=open" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID"
+```
+
+```js Node.js
+const params = new URLSearchParams({ page: 1, limit: 10, status: "open" });
+const res = await fetch(
+  `https://sandbox.stellasbank.com/api/v1/clients/business/disputes?${params}`,
+  {
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+    },
+  }
+);
+const { data, pagination } = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.get(
+    "https://sandbox.stellasbank.com/api/v1/clients/business/disputes",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+    params={"page": 1, "limit": 10, "status": "open"},
+)
+print(res.json())
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Disputes retrieved successfully",
+  "data": [
+    {
+      "id": "dispute_001",
+      "transactionId": "txn_abc001",
+      "description": "Amount charged does not match the agreed amount.",
+      "status": "open",
+      "dateCreated": "2024-06-09T10:00:00.000Z"
+    }
+  ],
+  "pagination": {
+    "totalCount": 5,
+    "hasNextPage": false,
+    "hasPreviousPage": false,
+    "nextPage": 0,
+    "previousPage": 0,
+    "limit": 10,
+    "lastPage": 1
+  }
+}
+```

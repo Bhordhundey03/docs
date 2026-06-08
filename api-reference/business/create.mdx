@@ -1,0 +1,115 @@
+---
+title: "Create business"
+description: "Register a new business under your client account."
+---
+
+## Endpoint
+
+```
+POST /clients/business
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+## Request body
+
+<ParamField body="businessName" type="string" required>
+  The legal name of the business.
+</ParamField>
+
+<ParamField body="countryId" type="string" required>
+  The ID of the country where the business is registered.
+</ParamField>
+
+<ParamField body="isNewBusiness" type="boolean" required>
+  Set to `true` if this is a newly registered business, `false` if it is an existing one.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable outcome.
+</ResponseField>
+
+<ResponseField name="data.business.id" type="string">
+  The unique ID of the newly created business. Save this — you will use it as your `businessId` header on subsequent requests.
+</ResponseField>
+
+<ResponseField name="data.business.businessName" type="string">
+  The name of the business as registered.
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST https://sandbox.stellasbank.com/api/v1/clients/business \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "businessName": "Acme Ltd",
+    "countryId": "NG",
+    "isNewBusiness": true
+  }'
+```
+
+```js Node.js
+const res = await fetch("https://sandbox.stellasbank.com/api/v1/clients/business", {
+  method: "POST",
+  headers: {
+    Authorization: "Bearer YOUR_ACCESS_TOKEN",
+    SECRET_KEY: "YOUR_SECRET_KEY",
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    businessName: "Acme Ltd",
+    countryId: "NG",
+    isNewBusiness: true,
+  }),
+});
+const { data } = await res.json();
+const businessId = data.business.id;
+```
+
+```python Python
+import requests
+
+res = requests.post(
+    "https://sandbox.stellasbank.com/api/v1/clients/business",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+    },
+    json={"businessName": "Acme Ltd", "countryId": "NG", "isNewBusiness": True},
+)
+business_id = res.json()["data"]["business"]["id"]
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Business created successfully",
+  "data": {
+    "business": {
+      "id": "biz_xyz789",
+      "businessName": "Acme Ltd"
+    }
+  }
+}
+```

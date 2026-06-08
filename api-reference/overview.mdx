@@ -1,0 +1,74 @@
+---
+title: "API overview"
+description: "Base URL, required headers, the response envelope, and global conventions for the Interstellas REST API."
+icon: "code"
+---
+
+## Base URL
+
+All API requests use the following base URLs:
+
+| Environment | Base URL |
+|-------------|----------|
+| Sandbox | `https://sandbox.stellasbank.com/api/v1` |
+| Production | `https://api.stellasbank.com/api/v1` |
+
+Use the sandbox URL while building and testing your integration. Switch to production only when you are ready to go live.
+
+## Request format
+
+- All request bodies must be JSON.
+- Set `Content-Type: application/json` on every request that includes a body.
+- File upload endpoints (such as business registration) accept `multipart/form-data` — see those endpoint pages for details.
+
+## Authentication
+
+Every business endpoint requires three headers:
+
+```http
+Authorization: Bearer YOUR_ACCESS_TOKEN
+SECRET_KEY: YOUR_SECRET_KEY
+businessId: YOUR_BUSINESS_ID
+```
+
+See [Authentication](/authentication) for how to obtain each credential.
+
+## Response envelope
+
+All responses — success and error — follow the same JSON envelope:
+
+```json
+{
+  "status": true,
+  "message": "Request was successful.",
+  "data": {}
+}
+```
+
+<ResponseField name="status" type="boolean" required>
+  `true` if the request succeeded; `false` if it failed. Use this field for programmatic checks.
+</ResponseField>
+
+<ResponseField name="message" type="string" required>
+  A human-readable outcome description. Use for logging — do not drive application logic from this string.
+</ResponseField>
+
+<ResponseField name="data" type="object | array | null">
+  The response payload. A single object for actions and detail endpoints; an array for list endpoints; `null` on errors.
+</ResponseField>
+
+## List responses and pagination
+
+Endpoints that return collections include a `pagination` object alongside `data`. See [Pagination](/essentials/pagination) for the full field reference and usage examples.
+
+## Errors
+
+On failure, `status` is `false` and `message` describes the problem. See [Errors](/essentials/errors) for the full status code reference and handling guidance.
+
+## Postman collection
+
+A pre-configured Postman workspace with all endpoints is available at the link below — useful for exploring the API before writing integration code.
+
+<Card title="Interstellas Postman Collection" icon="rectangle-terminal" href="https://documenter.getpostman.com/view/3701162/UV5f7DdA">
+  Test every endpoint interactively with pre-configured environments for sandbox and production.
+</Card>

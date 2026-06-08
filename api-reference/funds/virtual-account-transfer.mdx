@@ -1,0 +1,156 @@
+---
+title: "Virtual account transfer"
+description: "Transfer funds from a virtual account to another bank account."
+---
+
+## Endpoint
+
+```
+POST /clients/business/virtual-accounts/transfer
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  Your business ID.
+</ParamField>
+
+## Request body
+
+<ParamField body="amount" type="integer" required>
+  Amount to transfer, in **kobo**. For example, `110000` equals ₦1,100.
+</ParamField>
+
+<ParamField body="payerAccountNumber" type="string" required>
+  The virtual account number to debit (the source of funds).
+</ParamField>
+
+<ParamField body="receiverAccountNumber" type="string" required>
+  The destination bank account number to credit.
+</ParamField>
+
+<ParamField body="receiverBankCode" type="string" required>
+  The bank code of the receiving bank. Use the billers list from [Get billers](/api-reference/settings/billers) to look up codes.
+</ParamField>
+
+<ParamField body="retrievalReference" type="string" required>
+  A unique reference you generate for this transaction. Used for idempotency and reconciliation.
+</ParamField>
+
+<ParamField body="narration" type="string" required>
+  A description of the transfer, visible to both parties.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Confirmation message, e.g. `"Transfer successful"`.
+</ResponseField>
+
+<ResponseField name="data.amount" type="string">
+  Amount transferred, in kobo.
+</ResponseField>
+
+<ResponseField name="data.transactionCharge" type="string">
+  Fee charged for the transfer, in kobo.
+</ResponseField>
+
+<ResponseField name="data.totalAmount" type="string">
+  Total amount debited from the payer account (amount + charge), in kobo.
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST https://sandbox.stellasbank.com/api/v1/clients/business/virtual-accounts/transfer \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 110000,
+    "payerAccountNumber": "9012345678",
+    "receiverAccountNumber": "0123456789",
+    "receiverBankCode": "044",
+    "retrievalReference": "txn_ref_001",
+    "narration": "Payment for services"
+  }'
+```
+
+```js Node.js
+const res = await fetch(
+  "https://sandbox.stellasbank.com/api/v1/clients/business/virtual-accounts/transfer",
+  {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      amount: 110000,
+      payerAccountNumber: "9012345678",
+      receiverAccountNumber: "0123456789",
+      receiverBankCode: "044",
+      retrievalReference: "txn_ref_001",
+      narration: "Payment for services",
+    }),
+  }
+);
+const { data } = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.post(
+    "https://sandbox.stellasbank.com/api/v1/clients/business/virtual-accounts/transfer",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+    json={
+        "amount": 110000,
+        "payerAccountNumber": "9012345678",
+        "receiverAccountNumber": "0123456789",
+        "receiverBankCode": "044",
+        "retrievalReference": "txn_ref_001",
+        "narration": "Payment for services",
+    },
+)
+print(res.json())
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Transfer successful",
+  "data": {
+    "amount": "110000",
+    "transactionCharge": "10000",
+    "totalAmount": "120000"
+  }
+}
+```
+
+<Info>
+  All amounts are in **kobo**. Divide by 100 to convert to naira.
+</Info>

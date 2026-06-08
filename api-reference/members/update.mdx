@@ -1,0 +1,101 @@
+---
+title: "Update member"
+description: "Update a team member's details or status."
+---
+
+<Warning>
+  **TODO** — The source documentation for this endpoint was incomplete. Verify the following before publishing:
+  - [ ] Confirm the correct request body fields and their types
+  - [ ] Confirm whether this endpoint updates role, status, profile fields, or some combination
+  - [ ] Add a real response example
+</Warning>
+
+## Endpoint
+
+```
+PATCH /clients/members/{id}
+```
+
+## Path parameters
+
+<ParamField path="id" type="string" required>
+  The unique ID of the member to update.
+</ParamField>
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  Your business ID.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Confirmation message.
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X PATCH https://sandbox.stellasbank.com/api/v1/clients/members/MEMBER_ID \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID" \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+```js Node.js
+const res = await fetch(
+  "https://sandbox.stellasbank.com/api/v1/clients/members/MEMBER_ID",
+  {
+    method: "PATCH",
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ /* fields to update */ }),
+  }
+);
+const json = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.patch(
+    "https://sandbox.stellasbank.com/api/v1/clients/members/MEMBER_ID",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+    json={ # fields to update },
+)
+print(res.json())
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Member updated successfully"
+}
+```

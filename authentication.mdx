@@ -1,0 +1,57 @@
+---
+title: "Authentication"
+description: "How to authenticate requests to the Interstellas API."
+icon: "lock"
+---
+
+The Interstellas API uses **session-based bearer token authentication**. You obtain an access token by calling the signin endpoint, then pass it — along with your secret key and business ID — on every subsequent request.
+
+## Required headers
+
+Most business endpoints require all three of the following headers:
+
+| Header | Value | Description |
+|--------|-------|-------------|
+| `Authorization` | `Bearer YOUR_ACCESS_TOKEN` | Token returned by `POST /auth/signin` |
+| `SECRET_KEY` | `YOUR_SECRET_KEY` | Static API key from the dashboard |
+| `businessId` | `YOUR_BUSINESS_ID` | ID of the business context for the request |
+
+```http
+Authorization: Bearer YOUR_ACCESS_TOKEN
+SECRET_KEY: YOUR_SECRET_KEY
+businessId: YOUR_BUSINESS_ID
+```
+
+## Obtaining an access token
+
+Call `POST /auth/signin` with your registered email and password. The response includes a JWT `accessToken` and the list of businesses registered to your account. See the [signin reference](/api-reference/auth/signin) for the full request and response documentation.
+
+## Obtaining your secret key
+
+Your `SECRET_KEY` is available in the Interstellas dashboard under **Settings → API Keys**. You can also retrieve it programmatically via the [Get API keys](/api-reference/settings/get-keys) endpoint.
+
+## Obtaining your business ID
+
+Your `businessId` is returned in the `businesses` array from the signin response. If you have multiple businesses, choose the ID for the one you want to operate on.
+
+<Info>
+  The `Authorization` token is session-scoped and must be refreshed by re-authenticating. The `SECRET_KEY` is static until you rotate it manually.
+</Info>
+
+<Warning>
+  Never expose your `SECRET_KEY` or `accessToken` in client-side code, public repositories, or application logs. Treat both as passwords.
+</Warning>
+
+## Security best practices
+
+- Store credentials in environment variables — never hard-code them in source files.
+- Use separate credentials for sandbox and production environments.
+- Rotate your `SECRET_KEY` immediately if you suspect it has been compromised.
+- Requests made with a missing or invalid credential return `401 Unauthorized`.
+
+## Errors
+
+| Status | Meaning |
+|--------|---------|
+| `401 Unauthorized` | Missing, expired, or invalid `Authorization` token or `SECRET_KEY` |
+| `403 Forbidden` | Token is valid but lacks permission for the requested resource |

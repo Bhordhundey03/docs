@@ -1,0 +1,103 @@
+---
+title: "Invite member"
+description: "Send an invitation to add a new team member to your business."
+---
+
+## Endpoint
+
+```
+POST /clients/members
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  The ID of the business you are inviting the member to.
+</ParamField>
+
+## Request body
+
+<ParamField body="email" type="string" required>
+  The email address of the person you want to invite. An invitation will be sent to this address with a registration link.
+</ParamField>
+
+<ParamField body="memberRoleId" type="string" required>
+  The ID of the role to assign to the new member. Retrieve available role IDs from [`GET /clients/members/roles`](/api-reference/members/roles).
+</ParamField>
+
+## Response
+
+Returns `201 Created` on success.
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Confirmation message, e.g. `"Invitation sent successfully"`.
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST https://sandbox.stellasbank.com/api/v1/clients/members \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "newmember@example.com",
+    "memberRoleId": "role_abc123"
+  }'
+```
+
+```js Node.js
+const res = await fetch("https://sandbox.stellasbank.com/api/v1/clients/members", {
+  method: "POST",
+  headers: {
+    Authorization: "Bearer YOUR_ACCESS_TOKEN",
+    SECRET_KEY: "YOUR_SECRET_KEY",
+    businessId: "YOUR_BUSINESS_ID",
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    email: "newmember@example.com",
+    memberRoleId: "role_abc123",
+  }),
+});
+const json = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.post(
+    "https://sandbox.stellasbank.com/api/v1/clients/members",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+    json={"email": "newmember@example.com", "memberRoleId": "role_abc123"},
+)
+print(res.json())
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Invitation sent successfully"
+}
+```

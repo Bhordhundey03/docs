@@ -1,0 +1,166 @@
+---
+title: "List businesses"
+description: "Retrieve all businesses registered under your client account."
+---
+
+## Endpoint
+
+```
+GET /clients/business
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  Your business ID.
+</ParamField>
+
+## Query parameters
+
+<ParamField query="page" type="integer">
+  Page number. Defaults to `1`.
+</ParamField>
+
+<ParamField query="limit" type="integer">
+  Records per page. Defaults to `10`.
+</ParamField>
+
+See [Pagination](/essentials/pagination) for full usage.
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable outcome.
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of business objects.
+</ResponseField>
+
+<ResponseField name="data[].id" type="string">
+  Unique business ID.
+</ResponseField>
+
+<ResponseField name="data[].businessName" type="string">
+  The business's registered name.
+</ResponseField>
+
+<ResponseField name="data[].bvn" type="string">
+  Bank Verification Number associated with the business.
+</ResponseField>
+
+<ResponseField name="data[].photoIdUrl" type="string">
+  URL to the uploaded photo ID document.
+</ResponseField>
+
+<ResponseField name="data[].businessDocumentsUrls" type="array">
+  Array of URLs to uploaded business documents.
+</ResponseField>
+
+<ResponseField name="data[].isApproved" type="boolean">
+  `true` if the business has been approved by Interstellas.
+</ResponseField>
+
+<ResponseField name="data[].residentialAddress" type="string">
+  The registered residential address.
+</ResponseField>
+
+<ResponseField name="data[].stateId" type="string">
+  ID of the state where the business is located.
+</ResponseField>
+
+<ResponseField name="data[].state" type="object">
+  State object containing `id` and `name`.
+</ResponseField>
+
+<ResponseField name="data[].clientId" type="string">
+  The client account this business belongs to.
+</ResponseField>
+
+<ResponseField name="pagination" type="object">
+  Standard pagination envelope. See [Pagination](/essentials/pagination).
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://sandbox.stellasbank.com/api/v1/clients/business?page=1&limit=10" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID"
+```
+
+```js Node.js
+const res = await fetch(
+  "https://sandbox.stellasbank.com/api/v1/clients/business?page=1&limit=10",
+  {
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+    },
+  }
+);
+const { data, pagination } = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.get(
+    "https://sandbox.stellasbank.com/api/v1/clients/business",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+    params={"page": 1, "limit": 10},
+)
+print(res.json())
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Businesses retrieved successfully",
+  "data": [
+    {
+      "id": "biz_xyz789",
+      "businessName": "Acme Ltd",
+      "bvn": "12345678901",
+      "photoIdUrl": "https://storage.example.com/photo-id.jpg",
+      "businessDocumentsUrls": ["https://storage.example.com/doc1.pdf"],
+      "isApproved": true,
+      "residentialAddress": "12 Marina Street, Lagos",
+      "stateId": "state_01",
+      "state": { "id": "state_01", "name": "Lagos" },
+      "clientId": "client_001"
+    }
+  ],
+  "pagination": {
+    "totalCount": 3,
+    "hasNextPage": false,
+    "hasPreviousPage": false,
+    "nextPage": 0,
+    "previousPage": 0,
+    "limit": 10,
+    "lastPage": 1
+  }
+}
+```

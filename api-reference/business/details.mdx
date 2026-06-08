@@ -1,0 +1,138 @@
+---
+title: "Get business details"
+description: "Retrieve the details of the currently active business."
+---
+
+## Endpoint
+
+```
+GET /clients/business/details
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  The ID of the business whose details you want to retrieve.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable outcome.
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Business details object.
+</ResponseField>
+
+<ResponseField name="data.id" type="string">
+  Unique business ID.
+</ResponseField>
+
+<ResponseField name="data.businessName" type="string">
+  Registered business name.
+</ResponseField>
+
+<ResponseField name="data.bvn" type="string">
+  Bank Verification Number.
+</ResponseField>
+
+<ResponseField name="data.photoIdUrl" type="string">
+  URL to the uploaded photo ID.
+</ResponseField>
+
+<ResponseField name="data.businessDocumentsUrls" type="array">
+  URLs of uploaded business documents.
+</ResponseField>
+
+<ResponseField name="data.isApproved" type="boolean">
+  `true` if the business has been approved.
+</ResponseField>
+
+<ResponseField name="data.residentialAddress" type="string">
+  Registered residential address.
+</ResponseField>
+
+<ResponseField name="data.stateId" type="string">
+  State ID.
+</ResponseField>
+
+<ResponseField name="data.state" type="object">
+  State object with `id` and `name`.
+</ResponseField>
+
+<ResponseField name="data.clientId" type="string">
+  The client account this business belongs to.
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X GET https://sandbox.stellasbank.com/api/v1/clients/business/details \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID"
+```
+
+```js Node.js
+const res = await fetch(
+  "https://sandbox.stellasbank.com/api/v1/clients/business/details",
+  {
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+    },
+  }
+);
+const { data } = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.get(
+    "https://sandbox.stellasbank.com/api/v1/clients/business/details",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+)
+print(res.json()["data"])
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Business details retrieved successfully",
+  "data": {
+    "id": "biz_xyz789",
+    "businessName": "Acme Ltd",
+    "bvn": "12345678901",
+    "photoIdUrl": "https://storage.example.com/photo-id.jpg",
+    "businessDocumentsUrls": ["https://storage.example.com/doc1.pdf"],
+    "isApproved": true,
+    "residentialAddress": "12 Marina Street, Lagos",
+    "stateId": "state_01",
+    "state": { "id": "state_01", "name": "Lagos" },
+    "clientId": "client_001"
+  }
+}
+```

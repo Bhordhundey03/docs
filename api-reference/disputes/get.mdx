@@ -1,0 +1,115 @@
+---
+title: "Get dispute"
+description: "Retrieve the details of a single dispute by its ID."
+---
+
+## Endpoint
+
+```
+GET /clients/business/disputes/{id}
+```
+
+## Path parameters
+
+<ParamField path="id" type="string" required>
+  The unique ID of the dispute to retrieve.
+</ParamField>
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  Your business ID.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable outcome.
+</ResponseField>
+
+<ResponseField name="data.id" type="string">
+  Unique dispute ID.
+</ResponseField>
+
+<ResponseField name="data.transactionId" type="string">
+  The ID of the disputed transaction.
+</ResponseField>
+
+<ResponseField name="data.description" type="string">
+  Description of the issue submitted when the dispute was created.
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  Current status of the dispute.
+</ResponseField>
+
+<ResponseField name="data.dateCreated" type="string">
+  ISO 8601 timestamp of when the dispute was filed.
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X GET https://sandbox.stellasbank.com/api/v1/clients/business/disputes/DISPUTE_ID \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID"
+```
+
+```js Node.js
+const res = await fetch(
+  "https://sandbox.stellasbank.com/api/v1/clients/business/disputes/DISPUTE_ID",
+  {
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+    },
+  }
+);
+const { data } = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.get(
+    "https://sandbox.stellasbank.com/api/v1/clients/business/disputes/DISPUTE_ID",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+)
+print(res.json()["data"])
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Dispute retrieved successfully",
+  "data": {
+    "id": "dispute_001",
+    "transactionId": "txn_abc001",
+    "description": "Amount charged does not match the agreed amount.",
+    "status": "open",
+    "dateCreated": "2024-06-09T10:00:00.000Z"
+  }
+}
+```

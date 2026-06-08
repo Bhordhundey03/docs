@@ -1,0 +1,93 @@
+---
+title: "Delete payout account"
+description: "Remove a payout bank account from your business."
+---
+
+<Warning>
+  This action is permanent. Once deleted, the payout account cannot be restored. You will need to re-add it if needed.
+</Warning>
+
+## Endpoint
+
+```
+DELETE /clients/business/payouts/{payoutAccountId}
+```
+
+## Path parameters
+
+<ParamField path="payoutAccountId" type="string" required>
+  The unique ID of the payout account to delete.
+</ParamField>
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  Your business ID.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Confirmation message.
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X DELETE https://stella-thirdparty-api.herokuapp.com/api/v1/clients/business/payouts/PAYOUT_ID \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID"
+```
+
+```js Node.js
+const res = await fetch(
+  "https://stella-thirdparty-api.herokuapp.com/api/v1/clients/business/payouts/PAYOUT_ID",
+  {
+    method: "DELETE",
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+    },
+  }
+);
+const json = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.delete(
+    "https://stella-thirdparty-api.herokuapp.com/api/v1/clients/business/payouts/PAYOUT_ID",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+)
+print(res.json())
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Payout account deleted successfully"
+}
+```

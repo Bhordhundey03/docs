@@ -1,0 +1,114 @@
+---
+title: "Create subscription"
+description: "Create a subscription plan for recurring billing."
+---
+
+## Endpoint
+
+```
+POST /clients/business/subscriptions
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  Your business ID.
+</ParamField>
+
+## Request body
+
+<ParamField body="amount" type="string" required>
+  The billing amount for the subscription, in kobo.
+</ParamField>
+
+<ParamField body="packageName" type="string">
+  A name for the subscription package, e.g. `"Pro Plan"`.
+</ParamField>
+
+<ParamField body="interval" type="string">
+  The billing interval. Expected values may include `"monthly"`, `"weekly"`, or `"daily"`.
+
+  <Warning>
+    **TODO** — Confirm the exact accepted values for `interval` before publishing.
+  </Warning>
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Confirmation message.
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST https://stella-thirdparty-api.herokuapp.com/api/v1/clients/business/subscriptions \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": "500000",
+    "packageName": "Pro Plan",
+    "interval": "monthly"
+  }'
+```
+
+```js Node.js
+const res = await fetch(
+  "https://stella-thirdparty-api.herokuapp.com/api/v1/clients/business/subscriptions",
+  {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      amount: "500000",
+      packageName: "Pro Plan",
+      interval: "monthly",
+    }),
+  }
+);
+const json = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.post(
+    "https://stella-thirdparty-api.herokuapp.com/api/v1/clients/business/subscriptions",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+    json={"amount": "500000", "packageName": "Pro Plan", "interval": "monthly"},
+)
+print(res.json())
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Subscription created successfully"
+}
+```

@@ -1,0 +1,125 @@
+---
+title: "List payout accounts"
+description: "Retrieve all payout bank accounts registered for your business."
+---
+
+## Endpoint
+
+```
+GET /clients/business/payouts
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  Your business ID.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable outcome.
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of payout account objects.
+</ResponseField>
+
+<ResponseField name="data[].id" type="string">
+  Unique payout account ID. Use this as `payoutAccountId` when updating or deleting.
+</ResponseField>
+
+<ResponseField name="data[].accountName" type="string">
+  Name on the bank account.
+</ResponseField>
+
+<ResponseField name="data[].accountNumber" type="string">
+  Bank account number.
+</ResponseField>
+
+<ResponseField name="data[].bankCode" type="string">
+  Bank sort code.
+</ResponseField>
+
+<ResponseField name="data[].bankName" type="string">
+  Name of the bank.
+</ResponseField>
+
+<ResponseField name="data[].clientId" type="string">
+  The client account this payout account belongs to.
+</ResponseField>
+
+<ResponseField name="data[].createdAt" type="string">
+  ISO 8601 timestamp of when this payout account was created.
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X GET https://stella-thirdparty-api.herokuapp.com/api/v1/clients/business/payouts \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID"
+```
+
+```js Node.js
+const res = await fetch(
+  "https://stella-thirdparty-api.herokuapp.com/api/v1/clients/business/payouts",
+  {
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+    },
+  }
+);
+const { data } = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.get(
+    "https://stella-thirdparty-api.herokuapp.com/api/v1/clients/business/payouts",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+)
+print(res.json()["data"])
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Payout accounts retrieved successfully",
+  "data": [
+    {
+      "id": "payout_001",
+      "accountName": "Ada Lovelace",
+      "accountNumber": "0123456789",
+      "bankCode": "058",
+      "bankName": "Guaranty Trust Bank",
+      "clientId": "client_001",
+      "createdAt": "2024-05-20T09:00:00.000Z"
+    }
+  ]
+}
+```

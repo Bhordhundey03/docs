@@ -1,0 +1,102 @@
+---
+title: "Configure billers"
+description: "Update the set of billers (bank codes) enabled for your account."
+---
+
+## Endpoint
+
+```
+POST /clients/settings/configure-billers
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  Your business ID.
+</ParamField>
+
+## Request body
+
+<Warning>
+  **TODO** — The source documentation did not specify the request body structure for this endpoint. Verify the following before publishing:
+  - [ ] Confirm the exact request body fields (e.g. is it `{ "billers": ["044", "058"] }` or a different shape?)
+  - [ ] Confirm whether this replaces the full biller list or appends to it
+</Warning>
+
+<ParamField body="billers" type="array">
+  Array of bank code strings to enable for your account. Retrieve available codes from [Get billers](/api-reference/settings/billers).
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Confirmation message, e.g. `"Billers has been updated"`.
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST https://sandbox.stellasbank.com/api/v1/clients/settings/configure-billers \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "billers": ["044", "058", "011"]
+  }'
+```
+
+```js Node.js
+const res = await fetch(
+  "https://sandbox.stellasbank.com/api/v1/clients/settings/configure-billers",
+  {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ billers: ["044", "058", "011"] }),
+  }
+);
+const json = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.post(
+    "https://sandbox.stellasbank.com/api/v1/clients/settings/configure-billers",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+    json={"billers": ["044", "058", "011"]},
+)
+print(res.json())
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Billers has been updated"
+}
+```

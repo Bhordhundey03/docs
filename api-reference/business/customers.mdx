@@ -1,0 +1,146 @@
+---
+title: "List customers"
+description: "Retrieve all customers associated with your business."
+---
+
+## Endpoint
+
+```
+GET /clients/business/customers
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  The ID of the business whose customers you want to list.
+</ParamField>
+
+## Query parameters
+
+<ParamField query="page" type="integer">
+  Page number. Defaults to `1`.
+</ParamField>
+
+<ParamField query="limit" type="integer">
+  Records per page. Defaults to `10`.
+</ParamField>
+
+See [Pagination](/essentials/pagination) for full usage.
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` on success.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable outcome.
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of customer objects.
+</ResponseField>
+
+<ResponseField name="data[].id" type="string">
+  Unique customer ID.
+</ResponseField>
+
+<ResponseField name="data[].name" type="string">
+  Full name of the customer.
+</ResponseField>
+
+<ResponseField name="data[].phoneNo" type="string">
+  Customer's phone number.
+</ResponseField>
+
+<ResponseField name="data[].email" type="string">
+  Customer's email address.
+</ResponseField>
+
+<ResponseField name="data[].dateCreated" type="string">
+  ISO 8601 timestamp of when the customer record was created.
+</ResponseField>
+
+<ResponseField name="data[].nuban" type="string">
+  The NUBAN account number assigned to this customer.
+</ResponseField>
+
+<ResponseField name="pagination" type="object">
+  Standard pagination envelope. See [Pagination](/essentials/pagination).
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://sandbox.stellasbank.com/api/v1/clients/business/customers?page=1&limit=10" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID"
+```
+
+```js Node.js
+const res = await fetch(
+  "https://sandbox.stellasbank.com/api/v1/clients/business/customers?page=1&limit=10",
+  {
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+    },
+  }
+);
+const { data, pagination } = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.get(
+    "https://sandbox.stellasbank.com/api/v1/clients/business/customers",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+    params={"page": 1, "limit": 10},
+)
+print(res.json())
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "Customers retrieved successfully",
+  "data": [
+    {
+      "id": "cust_001",
+      "name": "Grace Hopper",
+      "phoneNo": "+2348098765432",
+      "email": "grace@example.com",
+      "dateCreated": "2024-03-15T10:30:00.000Z",
+      "nuban": "9876543210"
+    }
+  ],
+  "pagination": {
+    "totalCount": 50,
+    "hasNextPage": true,
+    "hasPreviousPage": false,
+    "nextPage": 2,
+    "previousPage": 0,
+    "limit": 10,
+    "lastPage": 5
+  }
+}
+```

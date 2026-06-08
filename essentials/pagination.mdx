@@ -1,0 +1,91 @@
+---
+title: "Pagination"
+description: "How to work with paginated list endpoints in the Interstellas API."
+---
+
+All list endpoints in the Interstellas API return paginated results. Use the `page` and `limit` query parameters to control which subset of records you receive.
+
+## Query parameters
+
+<ParamField query="page" type="integer">
+  The page number to retrieve. Starts at `1`. Defaults to `1` if omitted.
+</ParamField>
+
+<ParamField query="limit" type="integer">
+  The number of records to return per page. Defaults to `10`.
+</ParamField>
+
+Example request for page 2 with 25 results per page:
+
+```
+GET /api/v1/clients/members?page=2&limit=25
+```
+
+## Pagination object
+
+When a list endpoint returns paginated data, the response includes a `pagination` object alongside `data`:
+
+```json
+{
+  "status": true,
+  "message": "Members retrieved successfully.",
+  "data": [...],
+  "pagination": {
+    "totalCount": 84,
+    "hasNextPage": true,
+    "hasPreviousPage": true,
+    "nextPage": 3,
+    "previousPage": 1,
+    "limit": 25,
+    "lastPage": 4
+  }
+}
+```
+
+<ResponseField name="pagination.totalCount" type="integer">
+  Total number of records matching the current query, across all pages.
+</ResponseField>
+
+<ResponseField name="pagination.hasNextPage" type="boolean">
+  `true` if more records exist after the current page.
+</ResponseField>
+
+<ResponseField name="pagination.hasPreviousPage" type="boolean">
+  `true` if records exist on earlier pages.
+</ResponseField>
+
+<ResponseField name="pagination.nextPage" type="integer">
+  Pass this value as `?page=` to fetch the next page. Only meaningful when `hasNextPage` is `true`.
+</ResponseField>
+
+<ResponseField name="pagination.previousPage" type="integer">
+  Pass this value as `?page=` to fetch the previous page. Only meaningful when `hasPreviousPage` is `true`.
+</ResponseField>
+
+<ResponseField name="pagination.limit" type="integer">
+  The page size used for this response — reflects your `limit` parameter or the default of `10`.
+</ResponseField>
+
+<ResponseField name="pagination.lastPage" type="integer">
+  The final page number, derived from `totalCount ÷ limit`.
+</ResponseField>
+
+## Iterating all pages
+
+```js Node.js
+async function fetchAll(url, headers) {
+  let page = 1;
+  let hasNextPage = true;
+  const results = [];
+
+  while (hasNextPage) {
+    const res = await fetch(`${url}?page=${page}&limit=50`, { headers });
+    const json = await res.json();
+    results.push(...json.data);
+    hasNextPage = json.pagination.hasNextPage;
+    page = json.pagination.nextPage;
+  }
+
+  return results;
+}
+```

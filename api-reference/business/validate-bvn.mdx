@@ -1,0 +1,126 @@
+---
+title: "Validate BVN"
+description: "Verify a Bank Verification Number (BVN) and retrieve the associated identity information."
+---
+
+## Endpoint
+
+```
+POST /clients/business/validate-bvn
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+## Request body
+
+<ParamField body="bvn" type="string" required>
+  The 11-digit Bank Verification Number to validate.
+</ParamField>
+
+<ParamField body="businessId" type="string" required>
+  The ID of the business this BVN is being validated for.
+</ParamField>
+
+## Response
+
+<ResponseField name="status" type="boolean">
+  `true` if the BVN was found and validated successfully.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable outcome.
+</ResponseField>
+
+<ResponseField name="data.phoneNumber" type="string">
+  Phone number associated with the BVN.
+</ResponseField>
+
+<ResponseField name="data.bvn" type="string">
+  The BVN that was validated.
+</ResponseField>
+
+<ResponseField name="data.firstName" type="string">
+  First name of the BVN holder.
+</ResponseField>
+
+<ResponseField name="data.lastName" type="string">
+  Last name of the BVN holder.
+</ResponseField>
+
+<ResponseField name="data.otherNames" type="string">
+  Middle or other names of the BVN holder.
+</ResponseField>
+
+<ResponseField name="data.dob" type="string">
+  Date of birth of the BVN holder (format may vary).
+</ResponseField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST https://sandbox.stellasbank.com/api/v1/clients/business/validate-bvn \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "bvn": "12345678901",
+    "businessId": "YOUR_BUSINESS_ID"
+  }'
+```
+
+```js Node.js
+const res = await fetch(
+  "https://sandbox.stellasbank.com/api/v1/clients/business/validate-bvn",
+  {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ bvn: "12345678901", businessId: "YOUR_BUSINESS_ID" }),
+  }
+);
+const { data } = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.post(
+    "https://sandbox.stellasbank.com/api/v1/clients/business/validate-bvn",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+    },
+    json={"bvn": "12345678901", "businessId": "YOUR_BUSINESS_ID"},
+)
+print(res.json()["data"])
+```
+</CodeGroup>
+
+## Example response
+
+```json
+{
+  "status": true,
+  "message": "BVN validated successfully",
+  "data": {
+    "phoneNumber": "+2348012345678",
+    "bvn": "12345678901",
+    "firstName": "Ada",
+    "lastName": "Lovelace",
+    "otherNames": "Grace",
+    "dob": "1990-01-01"
+  }
+}
+```

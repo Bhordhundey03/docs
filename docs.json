@@ -1,0 +1,142 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Interstellas",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#6C47FF",
+    "light": "#A78BFA",
+    "dark": "#4C1D95"
+  },
+  "topbarLinks": [
+    {
+      "name": "Support",
+      "url": "mailto:support@interstellas.com"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Get Started",
+    "url": "https://interstellas.com"
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Docs",
+        "groups": [
+          {
+            "group": "Get started",
+            "pages": ["index", "quickstart", "authentication"]
+          },
+          {
+            "group": "Essentials",
+            "pages": [
+              "essentials/authentication",
+              "essentials/errors",
+              "essentials/pagination"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["api-reference/overview"]
+          },
+          {
+            "group": "Auth",
+            "pages": ["api-reference/auth/signin"]
+          },
+          {
+            "group": "Members",
+            "pages": [
+              "api-reference/members/invite",
+              "api-reference/members/list",
+              "api-reference/members/roles",
+              "api-reference/members/complete-registration",
+              "api-reference/members/update"
+            ]
+          },
+          {
+            "group": "Business",
+            "pages": [
+              "api-reference/business/create",
+              "api-reference/business/list",
+              "api-reference/business/details",
+              "api-reference/business/validate-bvn",
+              "api-reference/business/complete-registration",
+              "api-reference/business/account-details",
+              "api-reference/business/customers"
+            ]
+          },
+          {
+            "group": "Virtual accounts",
+            "pages": [
+              "api-reference/virtual-accounts/create",
+              "api-reference/virtual-accounts/create-single-use",
+              "api-reference/virtual-accounts/transactions"
+            ]
+          },
+          {
+            "group": "Funds",
+            "pages": [
+              "api-reference/funds/virtual-account-transfer",
+              "api-reference/funds/customer-transfer",
+              "api-reference/funds/withdraw",
+              "api-reference/funds/anonymous-transfer"
+            ]
+          },
+          {
+            "group": "Disputes",
+            "pages": [
+              "api-reference/disputes/create",
+              "api-reference/disputes/list",
+              "api-reference/disputes/get"
+            ]
+          },
+          {
+            "group": "Subscriptions",
+            "pages": [
+              "api-reference/subscriptions/create",
+              "api-reference/subscriptions/list"
+            ]
+          },
+          {
+            "group": "Payouts",
+            "pages": [
+              "api-reference/payouts/create",
+              "api-reference/payouts/list",
+              "api-reference/payouts/update",
+              "api-reference/payouts/delete"
+            ]
+          },
+          {
+            "group": "Audit logs",
+            "pages": [
+              "api-reference/audit-logs/list",
+              "api-reference/audit-logs/get"
+            ]
+          },
+          {
+            "group": "Settings",
+            "pages": [
+              "api-reference/settings/get-keys",
+              "api-reference/settings/billers",
+              "api-reference/settings/configure-billers",
+              "api-reference/settings/webhook"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "footerSocials": {
+    "github": "https://github.com/interstellas",
+    "x": "https://x.com/interstellas"
+  }
+}

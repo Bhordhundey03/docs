@@ -1,0 +1,58 @@
+---
+title: "Authentication deep dive"
+description: "A complete reference for Interstellas API credentials — what each one is, where to find it, and how all three work together."
+---
+
+Interstellas uses three separate credentials that work together on every authenticated request. Understanding what each one is prevents the most common integration errors.
+
+## Credential types
+
+### Access token
+
+The access token is a JWT issued by `POST /auth/signin`. It identifies the authenticated user session.
+
+- **How to get it:** Call `POST /auth/signin` with your email and password.
+- **Where to send it:** `Authorization: Bearer <token>` header.
+- **Lifetime:** Session-scoped. Re-authenticate when it expires.
+
+### Secret key
+
+The secret key is a static credential tied to your Interstellas account. It acts as a second authentication factor on server-to-server requests.
+
+- **How to get it:** Dashboard → **Settings → API Keys**, or via [`GET /clients/settings/get-keys`](/api-reference/settings/get-keys).
+- **Where to send it:** `SECRET_KEY: <key>` header.
+- **Lifetime:** Static until you rotate it manually.
+
+### Business ID
+
+The business ID scopes each request to a specific registered business under your account. A single client account can own multiple businesses, and most endpoints require you to specify which business you are operating on.
+
+- **How to get it:** Returned in the `businesses` array from `POST /auth/signin`.
+- **Where to send it:** `businessId: <id>` header.
+
+## Using all three together
+
+```http
+POST /api/v1/clients/business/virtual-accounts
+Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
+SECRET_KEY: sk_live_abc123xyz
+businessId: biz_xyz789
+Content-Type: application/json
+```
+
+<Warning>
+  If any of the three credentials is missing or invalid, the request fails with `401 Unauthorized`.
+</Warning>
+
+## Sandbox vs. production
+
+Use sandbox credentials against the sandbox base URL during development. Sandbox and production credentials are separate — never mix them.
+
+| Environment | Base URL |
+|-------------|----------|
+| Sandbox | `https://sandbox.stellasbank.com/api/v1` |
+| Production | `https://api.stellasbank.com/api/v1` |
+
+## Rotating your secret key
+
+Generate a new key from **Settings → API Keys** in the dashboard. Update your application's environment variable before deactivating the old key to avoid downtime.

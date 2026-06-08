@@ -1,0 +1,116 @@
+---
+title: "Anonymous transfer"
+description: "Transfer funds to another bank account without a named payer account."
+---
+
+<Warning>
+  **TODO** — The source documentation for this endpoint was incomplete. The response body was not documented. Verify the following before publishing:
+  - [ ] Confirm the complete response fields
+  - [ ] Confirm whether a `payerAccountNumber` is required or optional
+  - [ ] Clarify the difference between this endpoint and the standard customer transfer
+</Warning>
+
+## Endpoint
+
+```
+POST /clients/business/customers/funds/anonymous-transfer
+```
+
+## Headers
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="SECRET_KEY" type="string" required>
+  Your API secret key.
+</ParamField>
+
+<ParamField header="businessId" type="string" required>
+  Your business ID.
+</ParamField>
+
+## Request body
+
+<ParamField body="amount" type="integer" required>
+  Amount to transfer, in **kobo**.
+</ParamField>
+
+<ParamField body="receiverAccountNumber" type="string" required>
+  The destination bank account number.
+</ParamField>
+
+<ParamField body="receiverBankCode" type="string" required>
+  The bank code of the receiving bank.
+</ParamField>
+
+<ParamField body="retrievalReference" type="string" required>
+  A unique reference you generate for this transaction.
+</ParamField>
+
+<ParamField body="narration" type="string" required>
+  A description of the transfer.
+</ParamField>
+
+## Code examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST https://sandbox.stellasbank.com/api/v1/clients/business/customers/funds/anonymous-transfer \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "SECRET_KEY: YOUR_SECRET_KEY" \
+  -H "businessId: YOUR_BUSINESS_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 150000,
+    "receiverAccountNumber": "0123456789",
+    "receiverBankCode": "011",
+    "retrievalReference": "anon_txn_001",
+    "narration": "Anonymous payment"
+  }'
+```
+
+```js Node.js
+const res = await fetch(
+  "https://sandbox.stellasbank.com/api/v1/clients/business/customers/funds/anonymous-transfer",
+  {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      SECRET_KEY: "YOUR_SECRET_KEY",
+      businessId: "YOUR_BUSINESS_ID",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      amount: 150000,
+      receiverAccountNumber: "0123456789",
+      receiverBankCode: "011",
+      retrievalReference: "anon_txn_001",
+      narration: "Anonymous payment",
+    }),
+  }
+);
+const json = await res.json();
+```
+
+```python Python
+import requests
+
+res = requests.post(
+    "https://sandbox.stellasbank.com/api/v1/clients/business/customers/funds/anonymous-transfer",
+    headers={
+        "Authorization": "Bearer YOUR_ACCESS_TOKEN",
+        "SECRET_KEY": "YOUR_SECRET_KEY",
+        "businessId": "YOUR_BUSINESS_ID",
+    },
+    json={
+        "amount": 150000,
+        "receiverAccountNumber": "0123456789",
+        "receiverBankCode": "011",
+        "retrievalReference": "anon_txn_001",
+        "narration": "Anonymous payment",
+    },
+)
+print(res.json())
+```
+</CodeGroup>

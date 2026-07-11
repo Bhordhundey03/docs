@@ -85,6 +85,18 @@
             ]
           },
           {
+            "group": "Bulk transfers",
+            "pages": [
+              "api-reference/bulk-transfers/overview",
+              "api-reference/bulk-transfers/create",
+              "api-reference/bulk-transfers/process",
+              "api-reference/bulk-transfers/get",
+              "api-reference/bulk-transfers/list",
+              "api-reference/bulk-transfers/reprocess",
+              "api-reference/bulk-transfers/reprocess-logs"
+            ]
+          },
+          {
             "group": "Disputes",
             "pages": [
               "api-reference/disputes/create",

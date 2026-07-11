@@ -2,10 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "Interstellas",
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
+  "logo": "https://interstellas.stellasbank.com/static/media/mainbrand.6ccf1d44.svg",
   "favicon": "/favicon.svg",
   "colors": {
     "primary": "#6C47FF",
@@ -47,10 +44,6 @@
           {
             "group": "Overview",
             "pages": ["api-reference/overview"]
-          },
-          {
-            "group": "Auth",
-            "pages": ["api-reference/auth/signin"]
           },
           {
             "group": "Members",
@@ -125,7 +118,6 @@
           {
             "group": "Settings",
             "pages": [
-              "api-reference/settings/get-keys",
               "api-reference/settings/billers",
               "api-reference/settings/configure-billers",
               "api-reference/settings/webhook"

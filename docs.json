@@ -70,9 +70,11 @@
           {
             "group": "Virtual accounts",
             "pages": [
+              "api-reference/virtual-accounts/overview",
               "api-reference/virtual-accounts/create",
               "api-reference/virtual-accounts/create-single-use",
-              "api-reference/virtual-accounts/transactions"
+              "api-reference/virtual-accounts/list",
+              "api-reference/virtual-accounts/get"
             ]
           },
           {

@@ -3,13 +3,13 @@ title: "Reprocess"
 description: "Retry a failed bulk transfer batch, or a single failed item within one."
 ---
 
-Interstellas gives you two ways to retry failed transfers: reprocess an entire batch's failed items at once, or reprocess a single item. Both are asynchronous — they return `202 Accepted` immediately and do the actual work in the background. Poll [Get a bulk transfer](/api-reference/bulk-transfers/get) to see the outcome, or query [reprocess logs](/api-reference/bulk-transfers/reprocess-logs) for a full audit trail of every attempt.
+Interstellas gives you two ways to retry failed transfers: reprocess an entire batch's failed items at once, or reprocess a specific set of one or more items yourself. Both are asynchronous — they return `202 Accepted` immediately and do the actual work in the background. Poll [Get a bulk transfer](/api-reference/bulk-transfers/get) to see the outcome, or query [reprocess logs](/api-reference/bulk-transfers/reprocess-logs) for a full audit trail of every attempt.
 
 <Info>
   Only items in `failed` status can be reprocessed. `completed` items are left untouched by both endpoints below.
 </Info>
 
-## Reprocess a batch
+## Reprocess failed items in a batch
 
 Retries every `failed` item in a batch. Items that are `completed` are skipped; the request has no effect on them.
 
@@ -125,24 +125,20 @@ print(res.json())
 
 ---
 
-## Reprocess a single item
+## Reprocess items
 
-Retries exactly one failed item, without touching any other item in the batch.
+Retries one or more specific items you choose, without touching any other item in the batch. Use this instead of the batch-level endpoint above when you only want to retry a subset of what failed.
 
 ### Endpoint
 
 ```
-POST /clients/business/customers/funds/bulk-transfer/{bulkTransferId}/items/{itemId}/reprocess
+POST /clients/business/customers/funds/bulk-transfer/{bulkTransferId}/items/reprocess
 ```
 
 ### Path parameters
 
 <ParamField path="bulkTransferId" type="string" required>
-  The ID of the batch the item belongs to.
-</ParamField>
-
-<ParamField path="itemId" type="string" required>
-  The item's `id`, from the `items` array in [Get a bulk transfer](/api-reference/bulk-transfers/get).
+  The ID of the batch the items belong to.
 </ParamField>
 
 ### Headers
@@ -159,6 +155,12 @@ POST /clients/business/customers/funds/bulk-transfer/{bulkTransferId}/items/{ite
   Your business ID.
 </ParamField>
 
+### Request body
+
+<ParamField body="itemIds" type="array" required>
+  A non-empty array of item `id`s to reprocess, from the `items` array in [Get a bulk transfer](/api-reference/bulk-transfers/get). Every ID must belong to this batch.
+</ParamField>
+
 ### Response
 
 <ResponseField name="status" type="boolean">
@@ -166,41 +168,59 @@ POST /clients/business/customers/funds/bulk-transfer/{bulkTransferId}/items/{ite
 </ResponseField>
 
 <ResponseField name="message" type="string">
-  `"Transfer item reprocessing started"`.
+  `"Transfer item reprocessing started"` when `itemIds` has exactly one entry, or `"{n} transfer items reprocessing started"` for more than one.
 </ResponseField>
 
 <ResponseField name="data.bulkTransferId" type="string">
-  The batch the item belongs to.
+  The batch the items belong to.
 </ResponseField>
 
-<ResponseField name="data.itemId" type="string">
-  The item that was reprocessed.
+<ResponseField name="data.itemsQueued" type="integer">
+  The number of items queued for retry — equal to the length of `itemIds` you sent.
 </ResponseField>
 
-<ResponseField name="data.newTransactionReference" type="string">
-  The new transaction reference generated for this retry. The item's original reference is preserved separately as `originalTransactionReference` — see [Get a bulk transfer](/api-reference/bulk-transfers/get).
-</ResponseField>
+<Warning>
+  A `202` here means the item IDs were valid and belong to this batch — it does **not** mean every item was actually eligible to retry. Each item is still individually required to be in `failed` status; an item that isn't (e.g. already `completed`, or picked up by a concurrent reprocess request) is silently skipped in the background rather than causing the whole request to fail. `itemsQueued` reflects what you asked for, not what actually got retried. Poll [Get a bulk transfer](/api-reference/bulk-transfers/get) or check [item reprocess logs](/api-reference/bulk-transfers/reprocess-logs) to confirm which items actually changed state.
+</Warning>
+
+<Info>
+  Unlike the previous single-item version of this endpoint, the response no longer includes a `newTransactionReference` — since items are now processed as a background batch rather than synchronously set up one at a time, the new reference for each item is only visible via [Get a bulk transfer](/api-reference/bulk-transfers/get) (`items[].transactionReference`) or the item's [reprocess logs](/api-reference/bulk-transfers/reprocess-logs) once processing completes.
+</Info>
 
 ### Code examples
 
 <CodeGroup>
 ```bash cURL
-curl -X POST https://sandbox.stellasbank.com/api/v1/clients/business/customers/funds/bulk-transfer/6f9d3e2a-1b4c-4a8d-9e2f-3c1a2b4d5e6f/items/a1b2c3d4-0000-4a8d-9e2f-000000000002/reprocess \
+curl -X POST https://sandbox.stellasbank.com/api/v1/clients/business/customers/funds/bulk-transfer/6f9d3e2a-1b4c-4a8d-9e2f-3c1a2b4d5e6f/items/reprocess \
   -H "x-api-key: stl_c8e286ca55b0123e0b05da047494f585" \
   -H "x-api-secret: stl_test_6332e4b1dd6c2e5814395b549aec6deb0d0664406c66f2285f95f801c76117c0" \
-  -H "businessId: YOUR_BUSINESS_ID"
+  -H "businessId: YOUR_BUSINESS_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "itemIds": [
+      "a1b2c3d4-0000-4a8d-9e2f-000000000002",
+      "a1b2c3d4-0000-4a8d-9e2f-000000000005"
+    ]
+  }'
 ```
 
 ```js Node.js
 const res = await fetch(
-  "https://sandbox.stellasbank.com/api/v1/clients/business/customers/funds/bulk-transfer/6f9d3e2a-1b4c-4a8d-9e2f-3c1a2b4d5e6f/items/a1b2c3d4-0000-4a8d-9e2f-000000000002/reprocess",
+  "https://sandbox.stellasbank.com/api/v1/clients/business/customers/funds/bulk-transfer/6f9d3e2a-1b4c-4a8d-9e2f-3c1a2b4d5e6f/items/reprocess",
   {
     method: "POST",
     headers: {
       "x-api-key": "stl_c8e286ca55b0123e0b05da047494f585",
       "x-api-secret": "stl_test_6332e4b1dd6c2e5814395b549aec6deb0d0664406c66f2285f95f801c76117c0",
       businessId: "YOUR_BUSINESS_ID",
+      "Content-Type": "application/json",
     },
+    body: JSON.stringify({
+      itemIds: [
+        "a1b2c3d4-0000-4a8d-9e2f-000000000002",
+        "a1b2c3d4-0000-4a8d-9e2f-000000000005",
+      ],
+    }),
   }
 );
 const { data } = await res.json();
@@ -210,11 +230,17 @@ const { data } = await res.json();
 import requests
 
 res = requests.post(
-    "https://sandbox.stellasbank.com/api/v1/clients/business/customers/funds/bulk-transfer/6f9d3e2a-1b4c-4a8d-9e2f-3c1a2b4d5e6f/items/a1b2c3d4-0000-4a8d-9e2f-000000000002/reprocess",
+    "https://sandbox.stellasbank.com/api/v1/clients/business/customers/funds/bulk-transfer/6f9d3e2a-1b4c-4a8d-9e2f-3c1a2b4d5e6f/items/reprocess",
     headers={
         "x-api-key": "stl_c8e286ca55b0123e0b05da047494f585",
         "x-api-secret": "stl_test_6332e4b1dd6c2e5814395b549aec6deb0d0664406c66f2285f95f801c76117c0",
         "businessId": "YOUR_BUSINESS_ID",
+    },
+    json={
+        "itemIds": [
+            "a1b2c3d4-0000-4a8d-9e2f-000000000002",
+            "a1b2c3d4-0000-4a8d-9e2f-000000000005",
+        ],
     },
 )
 print(res.json())
@@ -226,11 +252,10 @@ print(res.json())
 ```json
 {
   "status": true,
-  "message": "Transfer item reprocessing started",
+  "message": "2 transfer items reprocessing started",
   "data": {
     "bulkTransferId": "6f9d3e2a-1b4c-4a8d-9e2f-3c1a2b4d5e6f",
-    "itemId": "a1b2c3d4-0000-4a8d-9e2f-000000000002",
-    "newTransactionReference": "TRX-ghi789"
+    "itemsQueued": 2
   }
 }
 ```
@@ -239,10 +264,11 @@ print(res.json())
 
 | Status | Cause |
 |---|---|
-| `400 Bad Request` | Item not found in this batch |
-| `400 Bad Request` | Item's current status isn't `failed` — message includes the current status |
-| `400 Bad Request` | The item was reprocessed by a concurrent request a moment earlier (`"Transfer item is not in a retryable state (concurrent update detected)"`) — safe to check the item's current status and decide whether to retry |
-| `400 Bad Request` | No payment account found for this business |
+| `400 Bad Request` | `itemIds` missing, empty, or contains a value that isn't a valid UUID |
+| `404 Not Found` | The batch itself doesn't exist for your client and business |
+| `404 Not Found` | One or more `itemIds` don't belong to this batch — the message lists exactly which IDs weren't found |
 | `401 Unauthorized` | `businessId` header missing, or credentials invalid |
+
+Unlike the request-level errors above, per-item eligibility problems (item not `failed`, or a concurrent reprocess already claimed it) don't surface as an HTTP error at all — see the Warning under Response.
 
 See [Errors](/essentials/errors) for the full envelope and error code reference.

@@ -32,7 +32,27 @@ GET /clients/business/customers/funds/bulk-transfers
 </ParamField>
 
 <ParamField query="limit" type="integer">
-  Records per page. Defaults to `20`.
+  Records per page. Defaults to `20`, capped at `100` — a `limit` above `100` is silently clamped down rather than rejected.
+</ParamField>
+
+<ParamField query="status" type="string">
+  Filter to batches with this exact `status` — `pending`, `processing`, `completed`, `failed`, or `partially_completed`.
+</ParamField>
+
+<ParamField query="batchName" type="string">
+  Filter to batches whose `batchName` contains this text. Case-insensitive, partial match.
+</ParamField>
+
+<ParamField query="keyword" type="string">
+  Search across both `batchName` and `bulkReference` for this text. Case-insensitive, partial match. If you also pass `batchName`, both filters apply together.
+</ParamField>
+
+<ParamField query="fromDate" type="string">
+  ISO 8601 date — only include batches created on or after this date.
+</ParamField>
+
+<ParamField query="toDate" type="string">
+  ISO 8601 date — only include batches created on or before this date.
 </ParamField>
 
 See [Pagination](/essentials/pagination) for full usage — this endpoint uses Shape B.
@@ -73,6 +93,10 @@ See [Pagination](/essentials/pagination) for full usage — this endpoint uses S
 
 <ResponseField name="data.bulkTransfers[].failedItems" type="integer">
   Number of items currently `failed`.
+</ResponseField>
+
+<ResponseField name="data.bulkTransfers[].totalAmount" type="string">
+  Sum of the `amount` of every item in this batch, in kobo — regardless of each item's individual status. `"0"` if the batch somehow has no items.
 </ResponseField>
 
 <ResponseField name="data.bulkTransfers[].status" type="string">
@@ -154,6 +178,7 @@ print(res.json())
         "totalItems": 2,
         "completedItems": 1,
         "failedItems": 1,
+        "totalAmount": "300000",
         "status": "partially_completed",
         "createdAt": "2024-07-01T09:00:00.000Z"
       }
@@ -167,6 +192,21 @@ print(res.json())
   }
 }
 ```
+
+## Filtering and search
+
+Combine `status`, `batchName`, `keyword`, and the date range params freely — they all narrow the same result set together. For example, to find `failed` batches from July whose name mentions "salaries":
+
+```bash cURL
+curl -X GET "https://sandbox.stellasbank.com/api/v1/clients/business/customers/funds/bulk-transfers?status=failed&batchName=salaries&fromDate=2024-07-01&toDate=2024-07-31" \
+  -H "x-api-key: stl_c8e286ca55b0123e0b05da047494f585" \
+  -H "x-api-secret: stl_test_6332e4b1dd6c2e5814395b549aec6deb0d0664406c66f2285f95f801c76117c0" \
+  -H "businessId: YOUR_BUSINESS_ID"
+```
+
+<Info>
+  `status` isn't validated against the list of known statuses — passing a value that doesn't match any batch (a typo, for instance) just returns an empty `bulkTransfers` array rather than a `400`.
+</Info>
 
 ## Errors
 

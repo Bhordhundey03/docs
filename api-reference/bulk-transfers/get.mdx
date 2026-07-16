@@ -86,7 +86,7 @@ GET /clients/business/customers/funds/bulk-transfer/{bulkTransferId}
 </ResponseField>
 
 <ResponseField name="data.items[].id" type="string">
-  Unique ID for this item. Use this as `itemId` when reprocessing a single item.
+  Unique ID for this item. Include it in `itemIds` when [reprocessing items](/api-reference/bulk-transfers/reprocess#reprocess-items).
 </ResponseField>
 
 <ResponseField name="data.items[].itemIndex" type="integer">

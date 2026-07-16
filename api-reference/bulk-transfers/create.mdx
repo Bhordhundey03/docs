@@ -4,7 +4,7 @@ description: "Submit a batch of up to 5,000 transfers in a single request."
 ---
 
 <Info>
-  New to bulk transfer? Read the [overview](/api-reference/bulk-transfers/overview) first — it explains statuses, reprocessing, and idempotency, all of which apply to this endpoint.
+  New to bulk transfer? Read the [overview](/api-reference/bulk-transfers/overview) first — it explains statuses, reprocessing, and idempotency, all of which apply to this endpoint. Prefer working from a spreadsheet instead of building the JSON payload yourself? See [Upload via Excel](/api-reference/bulk-transfers/upload).
 </Info>
 
 Creating a bulk transfer validates and records every transfer in the batch, then returns immediately — a `201` response means the batch was **accepted**, not that any money has moved. Nothing executes yet at this point.

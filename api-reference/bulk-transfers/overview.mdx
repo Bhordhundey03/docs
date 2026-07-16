@@ -10,7 +10,10 @@ This page explains the concepts that apply across every bulk transfer endpoint. 
 
 <CardGroup cols={2}>
   <Card title="Create a bulk transfer" icon="upload" href="/api-reference/bulk-transfers/create">
-    Submit a batch of transfers.
+    Submit a batch of transfers as JSON.
+  </Card>
+  <Card title="Upload via Excel" icon="file-spreadsheet" href="/api-reference/bulk-transfers/upload">
+    Submit a batch by uploading a spreadsheet instead.
   </Card>
   <Card title="Process a bulk transfer" icon="play" href="/api-reference/bulk-transfers/process">
     Start background processing for a batch.
@@ -31,8 +34,12 @@ This page explains the concepts that apply across every bulk transfer endpoint. 
 
 ## How it works
 
-1. **You submit a batch.** A `POST` request with a `batchName` and a `transfers` array — one entry per payment you want to make. Interstellas validates the batch, writes a row for the batch and one row per transfer, and responds immediately with `201 Created`. Nothing has been paid out yet at this point — every item starts in `pending`.
-2. **You start processing.** Batches don't begin executing on their own — call [Process a bulk transfer](/api-reference/bulk-transfers/process) with the `bulkTransferId` right after creating it. This queues every `pending` item for background execution and returns `202 Accepted` immediately.
+1. **You submit a batch**, one of two ways:
+   - A `POST` request with a `batchName` and a `transfers` array — one entry per payment you want to make. Interstellas validates the batch, writes a row for the batch and one row per transfer, and responds immediately with `201 Created`.
+   - Or [upload an Excel spreadsheet](/api-reference/bulk-transfers/upload) instead — Interstellas parses it into the same batch/item structure, then verifies every recipient's account name in the background before you're expected to process it. This path has extra steps (poll a preview, fix anything that failed verification) that the JSON path doesn't need, since JSON submissions are trusted to already have correct recipient details.
+
+   Either way, nothing has been paid out yet at this point — every item starts in `pending`.
+2. **You start processing.** Batches don't begin executing on their own — call [Process a bulk transfer](/api-reference/bulk-transfers/process) with the `bulkTransferId` once you're ready. This queues every `pending` item for background execution and returns `202 Accepted` immediately.
 3. **Interstellas processes items in the background.** Each item moves through `pending` → `processing` → `completed` or `failed` independently. There's no webhook for this today — poll [Get a bulk transfer](/api-reference/bulk-transfers/get) to watch progress.
 4. **The batch status reflects its items.** Once every item has reached a final state, the batch itself settles into `completed` (all items succeeded), `failed` (none succeeded), or `partially_completed` (a mix).
 5. **You reprocess what failed.** If any items end up `failed`, you can retry all of them at once or one at a time — see [Reprocess](/api-reference/bulk-transfers/reprocess). Items that already `completed` are never touched by a retry.
@@ -48,6 +55,7 @@ This page explains the concepts that apply across every bulk transfer endpoint. 
 | `completed` | Every item completed successfully |
 | `failed` | Every item failed |
 | `partially_completed` | A mix of completed and failed items |
+| `enquiry_complete` | Uploaded-via-Excel batches only — recipient name verification has finished for every row. See [Upload via Excel](/api-reference/bulk-transfers/upload). |
 
 ### Item (`status` on each transfer within `items`)
 

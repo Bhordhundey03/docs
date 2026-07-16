@@ -91,6 +91,7 @@
             "pages": [
               "api-reference/bulk-transfers/overview",
               "api-reference/bulk-transfers/create",
+              "api-reference/bulk-transfers/upload",
               "api-reference/bulk-transfers/process",
               "api-reference/bulk-transfers/get",
               "api-reference/bulk-transfers/list",

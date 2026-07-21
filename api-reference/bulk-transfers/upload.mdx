@@ -16,7 +16,7 @@ As an alternative to [Create a bulk transfer](/api-reference/bulk-transfers/crea
 
 ## Download the template
 
-<Card title="Interstellas Excel bulk upload template" icon="file-spreadsheet" href="/files/interstellas-bulk-transfer-template.xlsx">
+<Card title="Interstellas Excel bulk upload template" icon="file-spreadsheet" href="https://test-sandbox-api.stellas.africa/api/v1/public/interstellas-bulk-transfer-template.xlsx">
   Download the .xlsx template — start every upload from this file.
 </Card>
 
@@ -76,7 +76,7 @@ Send as `multipart/form-data`.
 ### Form fields
 
 <ParamField body="file" type="file" required>
-  The filled-in [Interstellas Excel bulk upload template](/files/interstellas-bulk-transfer-template.xlsx), matching the format above.
+  The filled-in [Interstellas Excel bulk upload template](https://test-sandbox-api.stellas.africa/api/v1/public/interstellas-bulk-transfer-template.xlsx), matching the format above.
 </ParamField>
 
 <ParamField body="batchName" type="string" required>
@@ -384,11 +384,15 @@ print(res.json())
 
 ## Edit an item
 
-Fix a row before processing — most commonly used to correct a row whose `nameEnquiryStatus` came back `failed`.
+Fix a row before processing — most commonly used to correct a row whose `nameEnquiryStatus` came back `failed`. Don't want to fix it, just remove it? See [Delete an item](/api-reference/bulk-transfers/delete#delete-an-item) instead.
 
 <Warning>
   This only works while the batch's `status` is `pending` or `enquiry_complete`. Once you've called [Process a bulk transfer](/api-reference/bulk-transfers/process), items can no longer be edited this way.
 </Warning>
+
+<Info>
+  Nothing about this endpoint is actually specific to uploaded batches — the same `pending`/`enquiry_complete` window applies to batches created via [JSON](/api-reference/bulk-transfers/create) too, which only ever reach `pending` (not `enquiry_complete`, since there's no name-enquiry step for JSON submissions). It's documented here because fixing a failed name-enquiry row is the main reason you'd use it.
+</Info>
 
 ### Endpoint
 
